@@ -8,17 +8,16 @@ import java.net.Socket;
 
 public class HttpServer {
     public static void main(String[] args) throws IOException {
+        ExecutorService es = Executors.newFixedThreadPool(20);
         while (true) {
-
             //ServerSocket
             ServerSocket serverSocket = co.edu.escuelaing.arem.project1sockets.ServerSocket.getNewServerSocket();
             //ClientSocket
             Socket clientSocket = ClientSocket.getNewClientSocket(serverSocket);
-            //Input Read
-            InputReader ir = new InputReader(clientSocket);
-            //Output
-            ResourceWriter rw = new ResourceWriter(ir.getResource(),clientSocket);
-            ir.closeIn();
+
+            //Execute thread
+            es.execute(new ThreadServer(clientSocket));
+
             //Close Sockets
             clientSocket.close();
             serverSocket.close();
